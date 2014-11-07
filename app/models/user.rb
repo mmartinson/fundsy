@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_secure_password
+  has_many :campaigns
 
   validates :email, presence: true, email_format: true
 

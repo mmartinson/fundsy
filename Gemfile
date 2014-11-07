@@ -12,6 +12,8 @@ gem 'jbuilder', '~> 2.0'
 gem 'slim-rails'
 gem 'animate-rails'
 gem 'font-awesome-rails'
+gem 'factory_girl_rails'
+gem 'faker'
 
 group :development do
   gem 'spring'
@@ -31,7 +33,6 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
-  gem 'factory_girl_rails'
 end
 
 group :production do

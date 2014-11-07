@@ -9,7 +9,7 @@ RSpec.describe User, :type => :model do
     end
 
     it 'rejects users with invalid email' do
-      user = User.new(email: "not and email")
+      user = User.new(email: "not an email")
       user.save
       expect(user.errors.messages).to have_key(:email)
     end
@@ -38,12 +38,6 @@ RSpec.describe User, :type => :model do
         user.password_confirmation = "gg1122"
         expect(user.password_digest).to be
       end
-
-      it 'does not generate password digest when password and password_confirmation don\'t match' do
-        user.password = "gg1122"
-        user.password_confirmation = "1122"
-        expect(user.password_digest).to be_falsey
-      end
     end
 
     describe 'callbasks' do
@@ -51,6 +45,7 @@ RSpec.describe User, :type => :model do
 
       describe 'capitalizing name' do
         it 'capitalizes first name before saving' do
+          user.first_name = 'tam'
           user.save
           expect(user.first_name).to eq("Tam")
         end
