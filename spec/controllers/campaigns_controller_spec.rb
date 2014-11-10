@@ -199,6 +199,13 @@ RSpec.describe CampaignsController, :type => :controller do
     end
 
     context 'with non-owner signed in' do
+      before {login user}
+      let!(:campaign) { create(:campaign, user: user1) }
+
+      it 'should raise an error' do
+        expect{delete :destroy, id: campaign.id}.to raise_error
+      end
+
     end
 
   end
