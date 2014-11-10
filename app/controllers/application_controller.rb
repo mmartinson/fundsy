@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  def authentice_user!  
+  def authenticate_user!  
     redirect_to new_session_path, alert: "Please sign in" unless user_signed_in?
   end
 

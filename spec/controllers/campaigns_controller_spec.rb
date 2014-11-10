@@ -2,15 +2,12 @@ require 'rails_helper'
 
 RSpec.describe CampaignsController, :type => :controller do
   let(:user) {create(:user)}
+  let(:user1) {create(:user)}
   let(:campaign) {create(:campaign, user: user)}
   let(:campaign_1) {create(:campaign, user: user)}
 
 
-  describe "GET index" do
-    it "returns http success" do
-      get :index
-      expect(response).to have_http_status(:success)
-    end
+  describe "#index" do
 
     it 'assigns all campaigns to a variable' do
       campaign
@@ -27,17 +24,14 @@ RSpec.describe CampaignsController, :type => :controller do
 
   describe "#new" do
     context 'with a signed in user' do
-      it "returns http success" do
-        get :new
-        expect(response).to have_http_status(:success)
-      end
+      before { login(user) }
 
-      it "Assigns a new campaign to a variable" do
+      it "assigns a new campaign to a variable" do
         get :new
         expect(assigns(:campaign)).to be_a_new(Campaign)
       end
 
-      it "Renders a new template" do
+      it "renders a new template" do
         get :new
         expect(response).to render_template(:new)
       end
@@ -45,7 +39,7 @@ RSpec.describe CampaignsController, :type => :controller do
 
     context 'without a signed in user' do
 
-      it 'redirects to new session path'
+      it 'redirects to new session path' do
         get :new
         expect(response).to redirect_to new_session_path
       end
@@ -53,45 +47,58 @@ RSpec.describe CampaignsController, :type => :controller do
 
   end
 
-  describe "POST create" do
-    context "With valid campaign params" do
-      def valid_request
-        post :create, {campaign: attributes_for(:campaign)}
-      end
+  describe "#create" do
 
-      it "saves record to the db" do
-        expect{valid_request}.to change{Campaign.count}.by(1)
-      end
-
-      it 'redirects to the campaign show page' do
-        valid_request
-        expect(response).to redirect_to(campaign_path(Campaign.last))
-      end
-
-      it 'sets a notice' do
-        valid_request
-        expect(flash[:notice]).to be
-      end
+    context 'without a signed in user' do
     end
 
-    context 'with invalid campaign paramas' do
-      def invalid_request
-        post :create, {campaign: {title: "gg"}}
+    context 'with a signed in user' do
+      before { login(user) }
+      context "With valid campaign params" do
+        def valid_request
+          post :create, {campaign: attributes_for(:campaign)}
+        end
+
+        it "saves record to the db" do
+          expect{valid_request}.to change{Campaign.count}.by(1)
+        end
+
+        it 'redirects to the campaign show page' do
+          valid_request
+          expect(response).to redirect_to(campaign_path(Campaign.last))
+        end
+
+        it 'sets a notice' do
+          valid_request
+          expect(flash[:notice]).to be
+        end
+
+        it 'assigns the logged in user to the campaign' do
+          valid_request
+          expect(Campaign.last.user).to eq(user)
+        end
+
       end
 
-      it 'sets an alert' do
-        invalid_request
-        expect(flash[:alert]).to be
-      end
+      context 'with invalid campaign params' do
+        def invalid_request
+          post :create, {campaign: {title: "gg"}}
+        end
 
-      it 'renders new template' do
-        invalid_request
-        expect(response).to render_template(:new)
-      end
+        it 'sets an alert' do
+          invalid_request
+          expect(flash[:alert]).to be
+        end
 
-      it 'doesn\'t save to the db' do
-        invalid_request
-        expect{invalid_request}.to_not change{Campaign.count}
+        it 'renders new template' do
+          invalid_request
+          expect(response).to render_template(:new)
+        end
+
+        it 'doesn\'t save to the db' do
+          invalid_request
+          expect{invalid_request}.to_not change{Campaign.count}
+        end
       end
     end
   end
@@ -109,18 +116,36 @@ RSpec.describe CampaignsController, :type => :controller do
   end
 
   describe "#edit" do
-    before { get :edit, id: campaign.id }
 
-    it "renders an edit template" do
-      expect(response).to render_template(:edit)
+    context 'with owner signed in' do
+      before do 
+        login user
+        get :edit, id: campaign.id 
+      end
+
+      it "renders an edit template" do
+        expect(response).to render_template(:edit)
+      end
+
+      it "assigns an instance variable campaign with passed id" do
+        expect(assigns(:campaign)).to eq(campaign)
+      end
     end
 
-    it "assigns an instance variable campaign with passed id" do
-      expect(assigns(:campaign)).to eq(campaign)
+    context 'with non-owner signed in' do
+      before do 
+        login user1
+      end
+
+      it 'raises error' do
+        expect{ get :edit, id: campaign.id }.to raise_error
+      end
+
     end
   end
 
   describe "#update" do
+    before {login user}
     context "with valid params" do
       def valid_request(params = {title: campaign.title})
         patch :update, id: campaign, campaign: params
@@ -159,15 +184,22 @@ RSpec.describe CampaignsController, :type => :controller do
   end
 
   describe "#destroy" do
-    let!(:campaign) { create(:campaign) }
+    context 'with owner signed in' do
+      before {login user}
+      let!(:campaign) { create(:campaign, user: user) }
 
-    it "remove the campaign from the database" do
-      expect { delete :destroy, id: campaign.id }.to change { Campaign.count }.by(-1)
+      it "remove the campaign from the database" do
+        expect { delete :destroy, id: campaign.id }.to change { Campaign.count }.by(-1)
+      end
+
+      it "redirect to campaign listing page" do
+        delete :destroy, id: campaign.id
+        expect(response).to redirect_to(campaigns_path)
+      end
     end
 
-    it "redirect to campaign listing page" do
-      delete :destroy, id: campaign.id
-      expect(response).to redirect_to(campaigns_path)
+    context 'with non-owner signed in' do
     end
+
   end
 end
