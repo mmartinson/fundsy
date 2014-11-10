@@ -25,21 +25,32 @@ RSpec.describe CampaignsController, :type => :controller do
     end
   end
 
-  describe "GET new" do
-    it "returns http success" do
-      get :new
-      expect(response).to have_http_status(:success)
+  describe "#new" do
+    context 'with a signed in user' do
+      it "returns http success" do
+        get :new
+        expect(response).to have_http_status(:success)
+      end
+
+      it "Assigns a new campaign to a variable" do
+        get :new
+        expect(assigns(:campaign)).to be_a_new(Campaign)
+      end
+
+      it "Renders a new template" do
+        get :new
+        expect(response).to render_template(:new)
+      end
     end
 
-    it "Assigns a new campaign to a variable" do
-      get :new
-      expect(assigns(:campaign)).to be_a_new(Campaign)
+    context 'without a signed in user' do
+
+      it 'redirects to new session path'
+        get :new
+        expect(response).to redirect_to new_session_path
+      end
     end
 
-    it "Renders a new template" do
-      get :new
-      expect(response).to render_template(:new)
-    end
   end
 
   describe "POST create" do
