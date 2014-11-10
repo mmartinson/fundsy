@@ -1,2 +1,6 @@
-h1 Campaigns#index
-p Find me in app/views/campaigns/index.html.slim
+h1 Welcome to Fund.sy
+
+- @campaigns.each do |campaign|
+  .well
+    h2 = campaign.title
+    p = campaign.description 
