@@ -85,4 +85,78 @@ RSpec.describe CampaignsController, :type => :controller do
     end
   end
 
+  describe "#show" do
+    before { get :show, id: campaign.id }
+
+    it "assigns an instance variable for campaign with passed id" do
+      expect(assigns(:campaign)).to eq(campaign)
+    end
+
+    it "renders show template" do
+      expect(response).to render_template(:show)
+    end
+  end
+
+  describe "#edit" do
+    before { get :edit, id: campaign.id }
+
+    it "renders an edit template" do
+      expect(response).to render_template(:edit)
+    end
+
+    it "assigns an instance variable campaign with passed id" do
+      expect(assigns(:campaign)).to eq(campaign)
+    end
+  end
+
+  describe "#update" do
+    context "with valid params" do
+      def valid_request(params = {title: campaign.title})
+        patch :update, id: campaign, campaign: params
+      end
+
+      it "changes the title of campaign if it's different" do
+        valid_request({title: "the hobbit"})
+        campaign.reload
+        expect(campaign.title).to eq("the hobbit")
+      end
+      it "changes the goal of campaign if it's different" do
+        valid_request({goal: 100000000})
+        expect(campaign.reload.goal).to eq(100000000)
+      end
+      it "redirect to the show page" do
+        valid_request
+        expect(response).to redirect_to(campaign_path(campaign))
+      end
+      it "sets a flash message" do
+        valid_request
+        expect(flash[:notice]).to be
+      end
+    end
+    context "with invalid params" do
+      def invalid_request(params = {title: ""})
+        patch :update, id: campaign, campaign: params
+      end
+      it "doesn't change the record" do
+        expect { invalid_request }.to_not change { campaign.reload.title }
+      end
+      it "renders the edit page" do
+        invalid_request
+        expect(response).to render_template(:edit)
+      end
+    end
+  end
+
+  describe "#destroy" do
+    let!(:campaign) { create(:campaign) }
+
+    it "remove the campaign from the database" do
+      expect { delete :destroy, id: campaign.id }.to change { Campaign.count }.by(-1)
+    end
+
+    it "redirect to campaign listing page" do
+      delete :destroy, id: campaign.id
+      expect(response).to redirect_to(campaigns_path)
+    end
+  end
 end
