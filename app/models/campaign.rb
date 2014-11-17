@@ -1,4 +1,5 @@
 class Campaign < ActiveRecord::Base
+  include AASM
   belongs_to :user
   has_many :reward_levels, dependent: :destroy
   accepts_nested_attributes_for :reward_levels,

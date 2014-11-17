@@ -15,6 +15,7 @@ gem 'font-awesome-rails'
 gem 'factory_girl_rails'
 gem 'faker'
 gem 'simple_form', github: 'plataformatec/simple_form'
+gem 'aasm'
 
 group :development do
   gem 'spring'
