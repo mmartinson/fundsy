@@ -1,6 +1,18 @@
 .col-sm-9
   h1 = @campaign.title
   p = @campaign.description
+  - if user_signed_in? && current_user == @campaign.user
+    - if @campaign.pending?
+      h3
+        span.label.label-warning
+      = link_to "Publish", campaign_publishings_path(@campaign), method: 'post', data: {confirm: "Really?"}
+  - elsif @campaign.published?
+    h3
+      span.label.label-success
+        "Published"
+
+
+
   hr
 .col-sm-3
   h3 Reward LEvles
