@@ -1,0 +1,13 @@
+.col-sm-9
+  h1 = @campaign.title
+  p = @campaign.description
+  hr
+.col-sm-3
+  h3 Reward LEvles
+    - @camapign.reward_levels.each do |rl|
+      .well
+        h4 = rl.name
+        p = rl.description
+        p = rl.price
+        - if rl.limit.present?
+          p = rl.limit

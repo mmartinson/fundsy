@@ -1,0 +1,18 @@
+= simple_form_for campaign do |f|
+  = f.input :title
+  = f.input :description
+  = f.input :goal
+  = f.input :deadline
+  h2 Reward Levels
+  = f.fields_for :reward_levels do |rl|
+    = rl.input :name
+    = rl.input :price
+    = rl.input :limit
+    = rl.input :description
+    hr
+
+
+
+
+  .form-group
+    = f.submit "Create campaign", class: 'btn btn-primary'
