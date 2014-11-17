@@ -14,6 +14,7 @@ gem 'animate-rails'
 gem 'font-awesome-rails'
 gem 'factory_girl_rails'
 gem 'faker'
+gem 'simple_form', github: 'plataformatec/simple_form'
 
 group :development do
   gem 'spring'
@@ -36,6 +37,8 @@ group :development, :test do
   gem 'capybara' 
   gem 'launchy'
 end
+
+gem 'simplecov', require: false, group: :test
 
 group :production do
   gem 'rails_12factor'

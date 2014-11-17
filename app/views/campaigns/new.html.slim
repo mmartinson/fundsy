@@ -1,2 +1,9 @@
-h1 Campaigns#new
-p Find me in app/views/campaigns/new.html.slim
+h2 Create a new campaign
+
+= simple_form_for @campaign do |f|
+  = f.input :title
+  = f.input :description
+  = f.input :goal
+  = f.input :deadline
+  .form-group
+    = f.submit "Create campaign", class: 'btn btn-primary'
