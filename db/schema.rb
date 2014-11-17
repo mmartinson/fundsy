@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141107183323) do
+ActiveRecord::Schema.define(version: 20141117184839) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,18 @@ ActiveRecord::Schema.define(version: 20141107183323) do
   end
 
   add_index "campaigns", ["user_id"], name: "index_campaigns_on_user_id", using: :btree
+
+  create_table "reward_levels", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "limit"
+    t.integer  "campaign_id"
+    t.integer  "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "reward_levels", ["campaign_id"], name: "index_reward_levels_on_campaign_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "first_name"

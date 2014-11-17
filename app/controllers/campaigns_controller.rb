@@ -8,6 +8,7 @@ class CampaignsController < ApplicationController
 
   def new
     @campaign = Campaign.new
+    3.times { @campaign.reward_levels.build }
   end
 
   def create
@@ -43,7 +44,15 @@ class CampaignsController < ApplicationController
   private
 
   def campaign_params
-    params.require(:campaign).permit(:title, :description, :goal, :deadline)
+    params.require(:campaign).permit(:title,
+                                     :description,
+                                     :goal,
+                                     :deadline,
+                                     {reward_levels_attributes:
+                                       [:name,
+                                        :price,
+                                        :description,
+                                        :limit]})
   end
 
   def find_users_campaign
